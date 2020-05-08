@@ -22,17 +22,18 @@ class App extends React.Component {
 
   formSubmit = e => {
     e.preventDefault();
-    const newTodo = [...this.state.todos, {id: uuid(), content: this.state.todo, completed: false}]
-    this.setState({todos: newTodo});
-    this.setState({todo: ''})
+    if (this.state.todo !== '') {
+      const newTodo = [...this.state.todos, {id: uuid(), content: this.state.todo, completed: false}]
+      this.setState({todos: newTodo});
+      this.setState({todo: ''})
+    }
   }
 
   onClickTodo = e => {
     e.persist();
-    this.state.todos.forEach((todo, index) => 
-      e.target.id === todo.id && this.setState(prevState => { 
-        prevState.todos[index].completed = !prevState.todos[index].completed; return prevState 
-      }));
+    this.state.todos.forEach((todo, index) => e.target.id === todo.id && this.setState(prevState => { 
+      prevState.todos[index].completed = !prevState.todos[index].completed; return prevState 
+    }));
   }
 
   onClickClearCompleted = e => {
@@ -40,20 +41,13 @@ class App extends React.Component {
     this.setState({todos: this.state.todos.filter(todo => todo.completed === false)});
   }
 
-  
   render() {
-    console.log(this.state.todos);
     return (
       <div className="container">
-        <div className="row my-4">
-          <div className="col">
-            <h2>Todo List</h2>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col">
-            <div className="card">
-              <div className="card-header">
+        <div className="row mt-5">
+          <div className="col-8">
+            <div className="card text-white bg-warning">
+              <div className="card-header h4">
                 Todo List
               </div>
               <ul className="list-group list-group-flush">
@@ -62,7 +56,7 @@ class App extends React.Component {
                     onClick={this.onClickTodo} 
                     key={todo.id} 
                     id={todo.id} 
-                    className={todo.completed ? 'list-group-item completed' : 'list-group-item'}
+                    className={todo.completed ? 'list-group-item bg-warning completed' : 'list-group-item bg-warning'}
                   >
                     {todo.content}
                   </li>
@@ -71,9 +65,27 @@ class App extends React.Component {
               <div className="card-body">
                 <form onSubmit={this.formSubmit}>
                   <div className="form-group mb-5 mt-4">
-                    <input type="text" onChange={this.onChangeInput} className="form-control" id="todo" placeholder="Input here..." value={this.state.todo} />
+                    <input 
+                      type="text" 
+                      onChange={this.onChangeInput} 
+                      className="form-control" 
+                      id="todo" 
+                      placeholder="Input here..." 
+                      value={this.state.todo} 
+                    />
                   </div>
-                  <button type="submit" className="btn btn-primary mr-4">Add Todo</button><button type="submit" onClick={this.onClickClearCompleted} className="btn btn-primary">Clear Completed</button>
+                  <button 
+                    type="submit" 
+                    className={this.state.todo === "" ? "disabled btn btn-primary mr-4" : "btn btn-primary mr-4"}
+                  >
+                    Add Todo
+                  </button>
+                  <button 
+                    onClick={this.onClickClearCompleted} 
+                    className={this.state.todos.length > 0 ? "btn btn-primary": "btn btn-primary disabled"}
+                  >
+                    Clear Completed
+                  </button>
                 </form>
               </div>
             </div>
